@@ -1,0 +1,266 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    color: #333;
+    background: linear-gradient(135deg, #fff4c4, #dff6ff);
+}
+
+header {
+    padding: 30px 20px;
+    color: white;
+    text-align: center;
+    background: linear-gradient(135deg, #7c4dff, #ff5da2);
+}
+
+header h1 {
+    margin-bottom: 10px;
+    font-size: 38px;
+}
+
+header p {
+    font-size: 18px;
+}
+
+main {
+    width: 100%;
+    max-width: 1100px;
+    min-height: 70vh;
+    margin: auto;
+    padding: 30px 20px;
+}
+
+.welcome-card {
+    margin-bottom: 30px;
+    padding: 25px;
+    text-align: center;
+    background: white;
+    border-radius: 22px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.welcome-card h2 {
+    margin-bottom: 10px;
+    color: #7c4dff;
+    font-size: 36px;
+}
+
+.welcome-card p {
+    font-size: 18px;
+}
+
+.menu {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+}
+
+.menu-card {
+    padding: 25px;
+    cursor: pointer;
+    background: white;
+    border: none;
+    border-radius: 22px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.menu-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 25px rgba(0, 0, 0, 0.18);
+}
+
+.menu-icon {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 55px;
+}
+
+.menu-card h3 {
+    margin-bottom: 8px;
+    color: #ff4081;
+    font-size: 24px;
+}
+
+.menu-card p {
+    font-size: 16px;
+}
+
+.hidden {
+    display: none;
+}
+
+.back-button {
+    margin-bottom: 22px;
+    padding: 12px 20px;
+    color: white;
+    cursor: pointer;
+    background: #7c4dff;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+}
+
+#lessonTitle {
+    margin-bottom: 25px;
+    color: #7c4dff;
+    text-align: center;
+    font-size: 34px;
+}
+
+.lesson-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.lesson-card {
+    padding: 25px;
+    text-align: center;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.lesson-picture {
+    margin-bottom: 12px;
+    font-size: 65px;
+}
+
+.kannada-word {
+    margin-bottom: 8px;
+    color: #ff4081;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.english-word {
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.speak-button {
+    padding: 11px 18px;
+    color: white;
+    cursor: pointer;
+    background: #00a884;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+}
+
+.speak-button:hover {
+    background: #008d6d;
+}
+
+.quiz-card {
+    max-width: 750px;
+    margin: auto;
+    padding: 30px;
+    text-align: center;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.14);
+}
+
+.quiz-card h2 {
+    margin-bottom: 15px;
+    color: #7c4dff;
+    font-size: 32px;
+}
+
+#quizScore {
+    margin-bottom: 15px;
+    color: #ff4081;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.quiz-picture {
+    margin: 20px 0;
+    font-size: 100px;
+}
+
+.quiz-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.quiz-option {
+    padding: 16px;
+    cursor: pointer;
+    background: #f0eaff;
+    border: 2px solid #7c4dff;
+    border-radius: 14px;
+    font-size: 24px;
+}
+
+.quiz-option:hover {
+    background: #ded2ff;
+}
+
+.quiz-option:disabled {
+    cursor: not-allowed;
+    opacity: 0.75;
+}
+
+.correct-answer {
+    color: white;
+    background: #00a884;
+    border-color: #00a884;
+}
+
+.wrong-answer {
+    color: white;
+    background: #e74c3c;
+    border-color: #e74c3c;
+}
+
+.quiz-message {
+    min-height: 35px;
+    margin-top: 20px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.next-button {
+    margin-top: 15px;
+    padding: 13px 22px;
+    color: white;
+    cursor: pointer;
+    background: #ff4081;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+}
+
+footer {
+    padding: 25px;
+    text-align: center;
+    background: white;
+}
+
+@media screen and (max-width: 750px) {
+    header h1 {
+        font-size: 29px;
+    }
+
+    .menu {
+        grid-template-columns: 1fr;
+    }
+
+    .lesson-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .quiz-options {
+        grid-template-columns: 1fr;
+    }
+}

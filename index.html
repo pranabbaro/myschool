@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Kannada Kids Learning</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>🌈 Kannada Kids Learning</h1>
+        <p>Learn Kannada with pictures, sounds and games</p>
+    </header>
+
+    <main>
+
+        <section id="homeSection">
+
+            <div class="welcome-card">
+                <h2>ನಮಸ್ಕಾರ 👋</h2>
+                <p>What would you like to learn today?</p>
+            </div>
+
+            <div class="menu">
+
+                <button
+                    class="menu-card"
+                    onclick="showLesson('letters')"
+                >
+                    <span class="menu-icon">ಅ</span>
+                    <h3>Kannada Letters</h3>
+                    <p>Learn basic Kannada letters</p>
+                </button>
+
+                <button
+                    class="menu-card"
+                    onclick="showLesson('numbers')"
+                >
+                    <span class="menu-icon">123</span>
+                    <h3>Numbers</h3>
+                    <p>Learn numbers in Kannada</p>
+                </button>
+
+                <button
+                    class="menu-card"
+                    onclick="showLesson('animals')"
+                >
+                    <span class="menu-icon">🐘</span>
+                    <h3>Animals</h3>
+                    <p>Learn animal names</p>
+                </button>
+
+                <button
+                    class="menu-card"
+                    onclick="showLesson('fruits')"
+                >
+                    <span class="menu-icon">🥭</span>
+                    <h3>Fruits</h3>
+                    <p>Learn fruit names</p>
+                </button>
+
+                <button
+                    class="menu-card"
+                    onclick="showQuiz()"
+                >
+                    <span class="menu-icon">⭐</span>
+                    <h3>Quiz</h3>
+                    <p>Test your Kannada knowledge</p>
+                </button>
+
+            </div>
+
+        </section>
+
+        <section id="lessonSection" class="hidden">
+
+            <button class="back-button" onclick="goHome()">
+                ← Back to Home
+            </button>
+
+            <h2 id="lessonTitle"></h2>
+
+            <div id="lessonCards" class="lesson-cards"></div>
+
+        </section>
+
+        <section id="quizSection" class="hidden">
+
+            <button class="back-button" onclick="goHome()">
+                ← Back to Home
+            </button>
+
+            <div class="quiz-card">
+
+                <h2>⭐ Kannada Picture Quiz</h2>
+
+                <p id="quizScore">Score: 0</p>
+
+                <div id="quizPicture" class="quiz-picture"></div>
+
+                <h3>Select the correct Kannada word</h3>
+
+                <div id="quizOptions" class="quiz-options"></div>
+
+                <p id="quizMessage" class="quiz-message"></p>
+
+                <button
+                    id="nextQuestionButton"
+                    class="next-button hidden"
+                    onclick="nextQuestion()"
+                >
+                    Next Question →
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+        <p>Made with ❤️ for learning Kannada</p>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
