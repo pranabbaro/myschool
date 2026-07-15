@@ -100,8 +100,10 @@ function openLanguage(name){
 
 function openTopic(title){
   const topic=courseData[selectedLanguage].topics[title];
-  document.getElementById("lessonTopics").classList.add("hidden");
-  document.getElementById("lessonDetail").classList.remove("hidden");
+  const topicsSection=document.getElementById("lessonTopics");
+  const detailSection=document.getElementById("lessonDetail");
+  topicsSection.classList.add("hidden");
+  detailSection.classList.remove("hidden");
   document.getElementById("lessonDetailTitle").textContent=title;
   const cards=document.getElementById("lessonCards");
   cards.innerHTML="";
@@ -109,9 +111,10 @@ function openTopic(title){
     const card=document.createElement("article");
     card.className="lesson-card";
     card.innerHTML=`<span class="pic">${pic}</span><div class="word">${word}</div><div class="meaning">${meaning}</div><button class="listen-btn">🔊 Listen</button>`;
-    card.querySelector("button").onclick=()=>speakWord(word,name);
+    card.querySelector("button").onclick=()=>speakWord(word);
     cards.appendChild(card);
   });
+  requestAnimationFrame(()=>detailSection.scrollIntoView({behavior:"smooth",block:"start"}));
 }
 
 function speakWord(word){
@@ -122,6 +125,224 @@ function speakWord(word){
   u.rate=.8;
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(u);
+}
+
+
+const storyData={
+  elephant:{
+    title:"The Kind Elephant",
+    text:"A kind elephant lived in a forest. One day, a little bird's nest fell from a tree. The elephant gently lifted the nest and placed it back on the branch. The bird thanked the elephant. Moral: Kindness makes us truly strong."
+  },
+  bird:{
+    title:"The Clever Bird",
+    text:"A thirsty bird found a pot with very little water. It dropped small stones into the pot until the water rose. The bird drank the water happily. Moral: Patience and clever thinking can solve difficult problems."
+  },
+  seed:{
+    title:"The Little Seed",
+    text:"A tiny seed rested under the soil. Rain came and the sun shone. Slowly, the seed grew into a healthy plant. Moral: Small beginnings can grow into something wonderful."
+  }
+};
+
+let activeStory=null;
+let memoryFirst=null;
+let memoryBusy=false;
+let currentGameLanguage="English";
+
+function openStory(key){
+  activeStory=storyData[key];
+  document.getElementById("storyTitle").textContent=activeStory.title;
+  document.getElementById("storyText").textContent=activeStory.text;
+  const reader=document.getElementById("storyReader");
+  reader.classList.remove("hidden");
+  requestAnimationFrame(()=>reader.scrollIntoView({behavior:"smooth",block:"start"}));
+}
+
+function speakStory(){
+  if(!activeStory) return;
+  if(!("speechSynthesis" in window)){
+    showToast("Speech is not supported in this browser.");
+    return;
+  }
+  const utterance=new SpeechSynthesisUtterance(activeStory.text);
+  utterance.lang="en-IN";
+  utterance.rate=.85;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+}
+
+function gameItems(){
+  const language=selectedLanguage && courseData[selectedLanguage] ? selectedLanguage : "English";
+  currentGameLanguage=language;
+  const topics=courseData[language].topics;
+  return [...topics.Animals.items,...topics.Fruits.items];
+}
+
+function openGame(type){
+  const panel=document.getElementById("gamePanel");
+  panel.classList.remove("hidden");
+  document.getElementById("gameContent").innerHTML="";
+
+  if(type==="memory") startMemoryGame();
+  if(type==="quiz") startPictureQuiz();
+  if(type==="builder") startWordBuilder();
+  if(type==="balloon") startBalloonGame();
+
+  requestAnimationFrame(()=>panel.scrollIntoView({behavior:"smooth",block:"start"}));
+}
+
+function startMemoryGame(){
+  document.getElementById("gameTitle").textContent="Memory Match";
+  document.getElementById("gameInstruction").textContent=`Match pictures with ${currentGameLanguage} words.`;
+  const pairs=shuffleItems(gameItems()).slice(0,6);
+  const cards=shuffleItems(pairs.flatMap((item,index)=>[
+    {id:index,value:item[0]},
+    {id:index,value:item[1]}
+  ]));
+  const board=document.createElement("div");
+  board.className="memory-board";
+  memoryFirst=null;
+  memoryBusy=false;
+
+  cards.forEach(data=>{
+    const tile=document.createElement("button");
+    tile.className="memory-tile";
+    tile.textContent="?";
+    tile.dataset.id=data.id;
+    tile.dataset.value=data.value;
+    tile.onclick=()=>flipMemoryTile(tile);
+    board.appendChild(tile);
+  });
+  document.getElementById("gameContent").appendChild(board);
+}
+
+function flipMemoryTile(tile){
+  if(memoryBusy || tile.classList.contains("matched") || tile===memoryFirst) return;
+  tile.classList.add("revealed");
+  tile.textContent=tile.dataset.value;
+
+  if(!memoryFirst){
+    memoryFirst=tile;
+    return;
+  }
+
+  if(memoryFirst.dataset.id===tile.dataset.id){
+    memoryFirst.classList.add("matched");
+    tile.classList.add("matched");
+    memoryFirst=null;
+    if([...document.querySelectorAll(".memory-tile")].every(t=>t.classList.contains("matched"))){
+      showToast("🏆 Memory game completed!");
+    }
+  }else{
+    memoryBusy=true;
+    setTimeout(()=>{
+      memoryFirst.classList.remove("revealed");
+      tile.classList.remove("revealed");
+      memoryFirst.textContent="?";
+      tile.textContent="?";
+      memoryFirst=null;
+      memoryBusy=false;
+    },700);
+  }
+}
+
+function startPictureQuiz(){
+  document.getElementById("gameTitle").textContent="Picture Quiz";
+  document.getElementById("gameInstruction").textContent=`Choose the correct ${currentGameLanguage} word.`;
+  const items=shuffleItems(gameItems());
+  const question=items[0];
+  const answers=shuffleItems([question[1],...items.slice(1,4).map(i=>i[1])]);
+
+  const wrapper=document.createElement("div");
+  wrapper.className="quiz-game";
+  wrapper.innerHTML=`<div class="picture">${question[0]}</div><div class="quiz-answers"></div>`;
+  const answerBox=wrapper.querySelector(".quiz-answers");
+
+  answers.forEach(answer=>{
+    const button=document.createElement("button");
+    button.className="quiz-answer";
+    button.textContent=answer;
+    button.onclick=()=>{
+      [...answerBox.children].forEach(b=>b.disabled=true);
+      if(answer===question[1]){
+        button.classList.add("correct");
+        showToast("Correct! ⭐");
+      }else{
+        button.classList.add("wrong");
+        [...answerBox.children].forEach(b=>{
+          if(b.textContent===question[1]) b.classList.add("correct");
+        });
+      }
+    };
+    answerBox.appendChild(button);
+  });
+
+  document.getElementById("gameContent").appendChild(wrapper);
+}
+
+function startWordBuilder(){
+  document.getElementById("gameTitle").textContent="Word Builder";
+  document.getElementById("gameInstruction").textContent="Tap the letters in the correct order.";
+  const item=shuffleItems(gameItems()).find(i=>String(i[1]).length<=10) || gameItems()[0];
+  const target=String(item[1]);
+  let answer="";
+
+  const wrapper=document.createElement("div");
+  wrapper.className="builder-box";
+  wrapper.innerHTML=`<div class="picture">${item[0]}</div><div id="builderAnswer" class="builder-answer"></div><div class="builder-letters"></div><button id="clearBuilder" class="outline">Clear</button>`;
+  const lettersBox=wrapper.querySelector(".builder-letters");
+  const answerBox=wrapper.querySelector("#builderAnswer");
+
+  shuffleItems([...target]).forEach(letter=>{
+    const chip=document.createElement("button");
+    chip.className="letter-chip";
+    chip.textContent=letter;
+    chip.onclick=()=>{
+      answer+=letter;
+      answerBox.textContent=answer;
+      chip.disabled=true;
+      if(answer===target) showToast("Excellent! Word completed ⭐");
+      else if(!target.startsWith(answer)) showToast("Try again.");
+    };
+    lettersBox.appendChild(chip);
+  });
+
+  wrapper.querySelector("#clearBuilder").onclick=()=>startWordBuilder();
+  document.getElementById("gameContent").appendChild(wrapper);
+}
+
+function startBalloonGame(){
+  document.getElementById("gameTitle").textContent="Balloon Pop";
+  const items=shuffleItems(gameItems()).slice(0,5);
+  const target=items[0];
+  document.getElementById("gameInstruction").textContent=`Pop the balloon that says “${target[1]}”.`;
+
+  const area=document.createElement("div");
+  area.className="balloon-area";
+  const colours=["#f44e9a","#6c35e8","#2e7eea","#ff8a16","#29a447"];
+
+  items.forEach((item,index)=>{
+    const balloon=document.createElement("button");
+    balloon.className="balloon";
+    balloon.textContent=item[1];
+    balloon.style.background=colours[index%colours.length];
+    balloon.style.left=`${8+(index%3)*30}%`;
+    balloon.style.top=`${20+(index%2)*130}px`;
+    balloon.onclick=()=>{
+      if(item[1]===target[1]){
+        balloon.style.display="none";
+        showToast("Pop! Correct answer ⭐");
+      }else{
+        showToast("Try another balloon.");
+      }
+    };
+    area.appendChild(balloon);
+  });
+
+  document.getElementById("gameContent").appendChild(area);
+}
+
+function shuffleItems(items){
+  return [...items].sort(()=>Math.random()-.5);
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
@@ -135,7 +356,27 @@ document.addEventListener("DOMContentLoaded",()=>{
     document.getElementById("languages").scrollIntoView({behavior:"smooth"});
   };
   document.getElementById("backToTopics").onclick=()=>{
-    document.getElementById("lessonDetail").classList.add("hidden");
-    document.getElementById("lessonTopics").classList.remove("hidden");
+    const detailSection=document.getElementById("lessonDetail");
+    const topicsSection=document.getElementById("lessonTopics");
+    detailSection.classList.add("hidden");
+    topicsSection.classList.remove("hidden");
+    requestAnimationFrame(()=>topicsSection.scrollIntoView({behavior:"smooth",block:"start"}));
+  };
+
+  document.querySelectorAll(".story-btn").forEach(button=>{
+    button.onclick=()=>openStory(button.dataset.story);
+  });
+  document.getElementById("closeStory").onclick=()=>{
+    if("speechSynthesis" in window) window.speechSynthesis.cancel();
+    document.getElementById("storyReader").classList.add("hidden");
+  };
+  document.getElementById("readStoryAloud").onclick=speakStory;
+
+  document.querySelectorAll(".game-btn").forEach(button=>{
+    button.onclick=()=>openGame(button.dataset.game);
+  });
+  document.getElementById("closeGame").onclick=()=>{
+    document.getElementById("gamePanel").classList.add("hidden");
+    document.getElementById("games").scrollIntoView({behavior:"smooth",block:"start"});
   };
 });
