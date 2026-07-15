@@ -1,0 +1,8 @@
+{
+  "name": "NovaKids",
+  "short_name": "NovaKids",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6c35e8"
+}
